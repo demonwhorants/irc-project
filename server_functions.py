@@ -1,5 +1,6 @@
 def build_room():
 
+    print "shiny room!"
     pass
 
 
@@ -16,3 +17,8 @@ def kick_user():
 def ban_user():
 
     pass
+
+
+def list_rooms(room_list):
+    for room in room_list:
+        print room

@@ -1,15 +1,41 @@
 import random
 import socket
-import server_functions as sfn
+
+
+def build_room():
+
+    print "shiny room!"
+    pass
+
+
+def destroy_room():
+
+    pass
+
+
+def kick_user():
+
+    pass
+
+
+def ban_user():
+
+    pass
+
+
+def list_rooms(room_list):
+    for room in room_list:
+        print room
 
 
 class Server:
 
     SERVER_COMMANDS = {
-        "build": sfn.build_room,
-        "destroy": sfn.destroy_room,
-        "kick": sfn.kick_user,
-        "ban": sfn.banned_users
+        "build": build_room,
+        "destroy": destroy_room,
+        "kick": kick_user,
+        "ban": ban_user,
+        "list_rooms": list_rooms
     }
 
     def __init__(self):
@@ -23,6 +49,8 @@ class Server:
         self.guests = []            # guest IDs
         self.logged_in_users.append(admin_ID)
         self.registered_users.append(
+
+            
             {
                 "user_ID": admin_ID,
                 "username": admin_name,
@@ -114,13 +142,17 @@ while True:
 
     try:
 
-        print "talk"
+        print "listening"
         client, address = s.accept()
         print address
         client.setblocking(1)
         rxd = client.recv(1024)
         if rxd:
-            print rxd
+            try:
+                print rxd
+                irc_server.SERVER_COMMANDS[rxd]()
+            except KeyError:
+                print "invalid command"
         client.close()
 
     except KeyboardInterrupt:
