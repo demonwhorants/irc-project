@@ -1,22 +1,41 @@
 import random
 import socket
-import sys
+import server_functions as sfn
 
 
 class Server:
+
+    SERVER_COMMANDS = {
+        "build": sfn.build_room,
+        "destroy": sfn.destroy_room,
+        "kick": sfn.kick_user,
+        "ban": sfn.banned_users
+    }
+
     def __init__(self):
+        admin_name = raw_input("Enter admin username: ")
+        admin_password = raw_input("Enter admin password: ")
+        admin_ID = random.randint(1, 100000)
+
         self.room_list = []         # room objects
         self.registered_users = []  # user:pw key  pairs
         self.logged_in_users = []   # user IDs
         self.guests = []            # guest IDs
-        admin_name = raw_input("Enter admin username: ")
-        admin_password = raw_input("Enter admin password: ")
+        self.logged_in_users.append(admin_ID)
         self.registered_users.append(
-            {"username": admin_name, "password": admin_password, "is_admin": "yes"}
+            {
+                "user_ID": admin_ID,
+                "username": admin_name,
+                "password": admin_password,
+                "server_admin": "yes"
+            }
         )
 
 
 class Room:
+
+    ROOM_COMMANDS = {}
+
     def __init__(self, room_name, creator):
         self.room_name = room_name
         self.user_list = [creator]
@@ -82,6 +101,7 @@ class Guest:
 
 # create server admin account
 
+
 irc_server = Server()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -99,10 +119,9 @@ while True:
         print address
         client.setblocking(1)
         rxd = client.recv(1024)
-        if not rxd:
-            break
-        print rxd
-        #client.close()
+        if rxd:
+            print rxd
+        client.close()
 
     except KeyboardInterrupt:
 
