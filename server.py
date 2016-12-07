@@ -94,7 +94,7 @@ while True:
 
     try:
 
-        print "talk to me"
+        print "talk"
         client, address = s.accept()
         print address
         client.setblocking(1)
