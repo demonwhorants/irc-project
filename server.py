@@ -2,30 +2,32 @@ import random
 import socket
 
 
-def build_room():
+def build_room(irc_server, creator, room_name):
 
-    print "shiny room!"
+    print creator + " made a shiny room called " + room_name
+    new_room = Room(creator, room_name)
+    irc_server.room_list.append(new_room)
+
+
+def destroy_room(irc_server, destroy_this_room):
+
+    irc_server.room_list = [room for room in irc_server.room_list if room.room_name != destroy_this_room]
+    print destroy_this_room + " destroyed."
+
+
+def kick_user(irc_server, user_name):
+
     pass
 
 
-def destroy_room():
-
-    pass
-
-
-def kick_user():
-
-    pass
-
-
-def ban_user():
+def ban_user(irc_server, user_name):
 
     pass
 
 
 def list_rooms(room_list):
     for room in room_list:
-        print room
+        print room.room_name
 
 
 class Server:
@@ -59,12 +61,15 @@ class Server:
             }
         )
 
+        def list_empty_rooms(self):
+            pass
+
 
 class Room:
 
     ROOM_COMMANDS = {}
 
-    def __init__(self, room_name, creator):
+    def __init__(self, creator, room_name):
         self.room_name = room_name
         self.user_list = [creator]
         self.admin_list = [creator]
@@ -104,6 +109,7 @@ class User:
 class Guest:
     def __init__(self, socket):
         self.guest_ID = random.randint(1, 100000)
+        self.username = "Guest" + str(self.guest_ID)
         self.room_list = []
         self.socket = socket
 
@@ -150,10 +156,11 @@ while True:
         if rxd:
             try:
                 print rxd
-                irc_server.SERVER_COMMANDS[rxd]()
+                command, creator, thing = rxd.split(" ")
+                irc_server.SERVER_COMMANDS[command](irc_server, creator, thing)
             except KeyError:
                 print "invalid command"
-        client.close()
+        #client.close()
 
     except KeyboardInterrupt:
 
